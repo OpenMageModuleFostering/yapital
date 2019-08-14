@@ -281,42 +281,28 @@ class Codex_Yapital_Model_Datatype_Basket extends Codex_Yapital_Model_Datatype_A
         $this->setPrice($order->getGrandTotal());
         $this->setCurrency($order->getBaseCurrency()->getCode());
 
-        // Extract items for cart
-        $items = $order->getAllVisibleItems();
-        foreach ( $items as $item )
-        {
-            /**
-             * Generate new item for cart
-             *
-             * @var $yapitalItem Codex_Yapital_Model_Datatype_Item
-             */
-            $yapitalItem = Mage::getModel(
-                "yapital/datatype_item"
-            );
+	    /**
+	     * Generate new item for cart
+	     *
+	     * @var $yapitalItem Codex_Yapital_Model_Datatype_Item
+	     *
+	     * 2014-09-12 RMP: only one item with grand total and tax
+	     */
+	    $yapitalItem = Mage::getModel("yapital/datatype_item");
 
-            // import mage data and add to cart
-            $yapitalItem->importItem($item);
-            $this->addItem(clone $yapitalItem);
+	    $yapitalItem->setShopItemId('none');
+	    $yapitalItem->setItemTitle('Yapital item');
+	    $yapitalItem->setItemMinAge(0);
 
-        }
+	    $yapitalItem->setItemPrice($this->getPrice());
+	    $yapitalItem->setItemTaxAmountIncluded($order->getTaxAmount());
 
-        /**
-         * Generate shipping as item
-         *
-         * @var $deliveryItem Codex_Yapital_Model_Datatype_Item
-         */
-        $deliveryItem = Mage::getModel("yapital/datatype_item");
-        $deliveryItem->setShopItemId($order->getShippingAddressId());
-        $deliveryItem->setItemTitle($order->getShippingDescription());
-        $deliveryItem->setItemMinAge(0);
+	    $yapitalItem->setTotalItemPrice($this->getPrice());
+	    $yapitalItem->setTotalItemTaxIncluded($order->getTaxAmount());
 
-        $deliveryItem->setQuantity(1);
-        $deliveryItem->setItemPrice($order->getShippingInclTax());
-        $deliveryItem->setItemTaxAmountIncluded($order->getShippingInclTax());
-        $deliveryItem->setTotalItemPrice($order->getShippingInclTax());
-        $deliveryItem->setTotalItemTaxIncluded($order->getShippingInclTax());
-        $deliveryItem->setItemId($order->getShippingAddressId()); // @todo proper id
-        $this->addItem($deliveryItem);
+	    $yapitalItem->setQuantity(1);
+
+	    $this->addItem($yapitalItem);
 
         return $this;
     }

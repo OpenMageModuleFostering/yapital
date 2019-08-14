@@ -190,9 +190,8 @@ class Codex_Yapital_Model_Resource_Report_Paymentmethod extends Mage_Sales_Model
                     Mage_Sales_Model_Order::STATE_NEW
                 ));
 
-
             if ($subSelect !== null) {
-                // $select->having($this->_makeConditionFromDateRangeSelect($subSelect, 'period'));
+                $select->having($this->_makeConditionFromDateRangeSelect($subSelect, 'period'));
             }
 
             $select->group(array(
@@ -201,7 +200,6 @@ class Codex_Yapital_Model_Resource_Report_Paymentmethod extends Mage_Sales_Model
                 'o.store_id',
                 'o.status',
             ));
-
 
             $adapter->query($select->insertFromSelect($this->getMainTable(), array_keys($columns)));
 

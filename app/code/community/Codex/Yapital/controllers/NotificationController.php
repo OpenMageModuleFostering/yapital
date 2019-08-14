@@ -5,6 +5,13 @@ class Codex_Yapital_NotificationController extends Mage_Core_Controller_Front_Ac
     public function receiveAction()
     {
         Codex_Yapital_Model_Log::log("notification: processing");
+        Codex_Yapital_Model_Log::debug(
+	        sprintf(
+		        "<<<REQUEST\n%s\nREQUEST;",
+		        $this->getRequest()->getRawBody()
+	        )
+        );
+
 
         $notification = Mage::getModel('yapital/notification');
         /* @var $notification Codex_Yapital_Model_Notification */
@@ -46,7 +53,7 @@ class Codex_Yapital_NotificationController extends Mage_Core_Controller_Front_Ac
 
 
         } else {
-            Codex_Yapital_Model_Log::error('notification: empty request');
+            Codex_Yapital_Model_Log::log('notification: empty request');
             $this->getResponse()->setHttpResponseCode(200); // Incase of not sending 200 everything breaks!
         }
 

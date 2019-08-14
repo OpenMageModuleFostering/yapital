@@ -311,7 +311,7 @@ class Codex_Yapital_Model_Datatype_Item extends Codex_Yapital_Model_Datatype_Abs
 
         /* @todo right fields selected from Order_Item? */
         $this->setItemPrice($item->getBasePrice());
-        $this->setItemTaxAmountIncluded($item->getBasePriceInclTax());
+        $this->setItemTaxAmountIncluded($item->getTaxAmount());
 
         $this->setTotalItemPrice($item->getPrice());
         $this->setTotalItemTaxIncluded($item->getPriceInclTax());
@@ -326,16 +326,14 @@ class Codex_Yapital_Model_Datatype_Item extends Codex_Yapital_Model_Datatype_Abs
     {
 
         return array(
-            // "item_id"                  => $this->getItemId(),
             "item_title"               => $this->getItemTitle(),
             "item_price"               => (float) $this->getItemPrice(),
             "item_tax_amount_included" => (float) $this->getItemTaxAmountIncluded(),
             "item_min_age"             => $this->getItemMinAge(),
-            "total_item_price"         => (float) ($this->getItemPrice() * $this->getQuantity()),
-            "total_item_tax_included"  => (float) $this->getTotalItemTaxIncluded(),
+            "total_item_price"         => (float) ($this->getItemPrice()),
+            "total_item_tax_included"  => (float) ($this->getTotalItemTaxIncluded()),
             "shop_item_id"             => $this->getShopItemId(),
             "quantity"                 => $this->getQuantity(),
-            // "merchant_items"           => $this->getMerchantItems(),
         );
     }
 }

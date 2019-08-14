@@ -103,7 +103,12 @@ class Codex_Yapital_Model_Log
             Mage::log('-------------', Zend_Log::INFO, $file, $forceLog);
         }
 
-        $message = "Yapital: " . $message;
+        $message = sprintf(
+	        "Yapital (%s): %s",
+	        getmypid(),
+	        $message
+        );
+
         if (self::$_print)
         {
             echo "\n" . $message . "\n";

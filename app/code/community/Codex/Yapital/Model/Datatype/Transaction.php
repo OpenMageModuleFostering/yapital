@@ -323,6 +323,9 @@ class Codex_Yapital_Model_Datatype_Transaction extends Codex_Yapital_Model_Datat
 
     function getData ()
     {
+        /** @var Codex_Yapital_Model_Datatype_ISOLanguage $languageModel */
+        $languageModel = Mage::getModel('yapital/datatype_ISOLanguage');
+
         return array(
             // "transaction_id"     => $this->getTransactionId(),
             "qr_code_url"        => $this->getQrCodeUrl(),
@@ -334,6 +337,7 @@ class Codex_Yapital_Model_Datatype_Transaction extends Codex_Yapital_Model_Datat
             "return_url"         => $this->getReturnUrl(),
             "cancel_url"         => $this->getCancelUrl(),
             "error_url"          => $this->getErrorUrl(),
+            "language"           => $languageModel->getYapitalLanguage(),
         );
     }
 }

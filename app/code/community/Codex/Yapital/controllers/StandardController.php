@@ -62,6 +62,9 @@ class Codex_Yapital_StandardController extends Mage_Core_Controller_Front_Action
                 $order->cancel()->save();
             }
         }
+
+        Mage::helper('yapital/checkout')->restoreQuote();
+
         $this->_redirect('checkout/cart');
     }
 
@@ -71,6 +74,13 @@ class Codex_Yapital_StandardController extends Mage_Core_Controller_Front_Action
     public function successAction()
     {
         Mage::getSingleton('checkout/session')->getQuote()->setIsActive(false)->save();
+
+        try {
+            $this->_getOrder()->sendNewOrderEmail();
+        } catch (Exception $e) {
+            Mage::logException($e);
+        }
+
         $this->_redirect('checkout/onepage/success', array('_secure'=>true));
     }
 

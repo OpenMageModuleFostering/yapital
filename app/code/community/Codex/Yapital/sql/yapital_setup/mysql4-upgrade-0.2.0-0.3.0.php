@@ -4,7 +4,7 @@
 $installer = $this;
 $installer->startSetup();
 
-Codex_Yapital_Model_Log::log('codex_yapital update to 0.3.0', null, '', true);
+Mage::log('codex_yapital update to 0.3.0', null, '', true);
 
 /**
 * Create table 'sales/order_aggregated_payment'
