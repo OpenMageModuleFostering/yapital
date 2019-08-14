@@ -9,7 +9,7 @@ class Codex_Yapital_Model_Api_Token extends Codex_Yapital_Model_Api_Abstract
      * @param string $client_id
      * @param string $secret
      *
-     * @return Codex_Yapital_Model_Datatype_Token
+     * @return Codex_Yapital_Model_Datatype_Token|false The token as received or `false` if something went wrong.
      */
     public function getTokenByCredentials($client_id, $secret)
     {
@@ -33,14 +33,22 @@ class Codex_Yapital_Model_Api_Token extends Codex_Yapital_Model_Api_Abstract
                  'Accept-Encoding' => 'gzip,deflate',
                  'Authorization'   => $auth,
                  'Content-Type'    => 'application/x-www-form-urlencoded',
-                 'Connection'      => 'keepalive',
             )
         );
 
-        $response = $client->restPost(
-            $config->getApiUrlPath() . '/oauth/token',
-            'grant_type=client_credentials'
-        );
+        try
+        {
+            $path     = $config->getApiUrlPath() . '/oauth/token';
+            $response = $client->restPost($path, 'grant_type=client_credentials');
+
+            $client->resetHttpClient();
+        } catch (Zend_Http_Client_Exception $e) {
+
+            Codex_Yapital_Model_Log::error(
+                sprintf('Connection failure (on %s): %s', $client->getUri(), $e->getMessage())
+            );
+            return false;
+        }
 
         /** @var $token Codex_Yapital_Model_Datatype_Token */
         $token = Mage::getModel("yapital/datatype_token");
@@ -83,6 +91,11 @@ class Codex_Yapital_Model_Api_Token extends Codex_Yapital_Model_Api_Abstract
     }
 
 
+    /**
+     * @param mixed$store_id
+     *
+     * @return Codex_Yapital_Model_Datatype_Token
+     */
     public function getTokenByStoreConfig($store_id = null)
     {
         $config = $this->_getConfig();

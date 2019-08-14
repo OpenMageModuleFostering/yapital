@@ -1,6 +1,15 @@
 <?xml version="1.0"?>
 <layout version="0.1.0">
 
+    <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>yapital.js</name>
+            </action>
+        </reference>
+    </default>
+
     <report_yapital>
         <reference name="messages">
             <action method="addNotice" translate="message">
@@ -12,9 +21,13 @@
     <adminhtml_report_yapital_payment>
         <update handle="report_yapital"/>
         <reference name="content">
-            <block type="yapital/adminhtml_report_yapital_payment" template="report/grid/container.phtml" name="yapital.report.grid.container">
-                <block type="adminhtml/store_switcher" template="report/store/switcher/enhanced.phtml" name="store.switcher">
-                    <action method="setStoreVarName"><var_name>store_ids</var_name></action>
+            <block type="yapital/adminhtml_report_yapital_payment" template="report/grid/container.phtml"
+                   name="yapital.report.grid.container">
+                <block type="adminhtml/store_switcher" template="report/store/switcher/enhanced.phtml"
+                       name="store.switcher">
+                    <action method="setStoreVarName">
+                        <var_name>store_ids</var_name>
+                    </action>
                 </block>
                 <block type="sales/adminhtml_report_filter_form_order" name="grid.filter.form">
                     <action method="addReportTypeOption" translate="value">

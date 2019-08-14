@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Codex_Yapital>
-            <version>1.0.0.0</version>
+            <version>1.1.0</version>
         </Codex_Yapital>
     </modules>
 
@@ -57,6 +57,16 @@
             </yapital_setup>
         </resources>
 
+        <translate>
+            <modules>
+                <Codex_Yapital>
+                    <files>
+                        <default>Codex_Yapital.csv</default>
+                    </files>
+                </Codex_Yapital>
+            </modules>
+        </translate>
+
     </global>
 
     <phpunit>
@@ -84,15 +94,6 @@
                 </yapital>
             </updates>
         </layout>
-        <translate>
-            <modules>
-                <Codex_Yapital>
-                    <files>
-                        <default>Codex_Yapital.csv</default>
-                    </files>
-                </Codex_Yapital>
-            </modules>
-        </translate>
     </frontend>
 
     <adminhtml>
@@ -134,7 +135,7 @@
         <yapital>
             <url>
                 <base>https://secure.yapital.com</base>
-                <api>api/v0.1</api>
+                <api>/api/v0.1</api>
                 <iframe_script>/beta/js/widget/script.js</iframe_script>
             </url>
         </yapital>
@@ -142,8 +143,8 @@
         <yapital_sandbox>
             <url>
                 <base>https://demo.dev.yapital.com</base>
-                <api>/3pnext/api/v0.1</api>
-                <iframe_script>/3pnext/web-ui/js/widget/script.js</iframe_script>
+                <api>/api/v0.1</api>
+                <iframe_script>/web-ui/js/widget/script.js</iframe_script>
             </url>
         </yapital_sandbox>
 
@@ -158,4 +159,21 @@
             </yapital_standard>
         </payment>
     </default>
+
+    <behat>
+        <contexts>
+            <Codex_Yapital_Test_FeatureContext>
+                <active>1</active>
+            </Codex_Yapital_Test_FeatureContext>
+        </contexts>
+        <tests>
+            <Codex_Yapital>
+                <active>1</active>
+                <features>
+                    <backend_config><active>1</active></backend_config>
+                    <checkout><active>1</active></checkout>
+                </features>
+            </Codex_Yapital>
+        </tests>
+    </behat>
 </config>

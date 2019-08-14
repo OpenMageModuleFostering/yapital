@@ -43,6 +43,11 @@ class Codex_Yapital_Model_Api_Notification extends Codex_Yapital_Model_Api_Abstr
         return $this;
     }
 
+    /**
+     * This method serves to get all notifications to which the shop is subscribed.
+     *
+     * @return Codex_Yapital_Model_Datatype_Notification[]
+     */
     public function getAll()
     {
         $result = array();
@@ -56,13 +61,16 @@ class Codex_Yapital_Model_Api_Notification extends Codex_Yapital_Model_Api_Abstr
         if ( $data = json_decode($response,1) )
         {
 
-            foreach( $data['payload'] AS $payload ) {
-                $notification = Mage::getModel('yapital/datatype_notification');
-                /* @var $notification Codex_Yapital_Model_Datatype_Notification */
+            if( isset( $data['payload'] ) && is_array( $data['payload']['notification'] ) )
+            {
+                foreach( $data['payload']['notification'] AS $payload ) {
+                    $notification = Mage::getModel('yapital/datatype_notification');
+                    /* @var $notification Codex_Yapital_Model_Datatype_Notification */
 
-                $notification->importPayload( $payload );
+                    $notification->importPayload( $payload );
 
-                $result[] = $notification;
+                    $result[] = $notification;
+                }
             }
 
         }

@@ -1,7 +1,7 @@
 <?php
 
 class Codex_Yapital_Block_System_Config_Storage_Credentials_Notification
-extends Mage_Adminhtml_Block_System_Config_Form_Field
+extends Codex_Yapital_Block_System_Config_Storage_Credentials_Abstract
 {
     /*
      * Set template
@@ -9,7 +9,7 @@ extends Mage_Adminhtml_Block_System_Config_Form_Field
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('yapital/system/config/storage/credentials/notification.phtml');
+        $this->setTemplate('yapital/config/credentials/notification.phtml');
     }
 
     /**
@@ -32,7 +32,17 @@ extends Mage_Adminhtml_Block_System_Config_Form_Field
     public function getAjaxRegisterUrl()
     {
         // @todo yapital_system_config_system_storage/validate
-        return Mage::getSingleton('adminhtml/url')->getUrl('*/yapital_notification/register');
+        return Mage::getSingleton('adminhtml/url')->getUrl('*/yapital_notification/register', array( 'sandbox' => $this->is_sandbox ) );
+    }
+
+    /**
+     * Return ajax url for unregister button
+     *
+     * @return string
+     */
+    public function getAjaxUnregisterUrl()
+    {
+        return Mage::getSingleton('adminhtml/url')->getUrl('*/yapital_notification/unregister', array( 'sandbox' => $this->is_sandbox ) );
     }
 
     /**
@@ -43,7 +53,7 @@ extends Mage_Adminhtml_Block_System_Config_Form_Field
     public function getAjaxStatusUpdateUrl()
     {
         // @todo yapital_system_config_system_storage/status
-        return Mage::getSingleton('adminhtml/url')->getUrl('*/yapital_notification/status');
+        return Mage::getSingleton('adminhtml/url')->getUrl('*/yapital_notification/status', array( 'sandbox' => $this->is_sandbox ) );
     }
 
     /**
@@ -66,10 +76,32 @@ extends Mage_Adminhtml_Block_System_Config_Form_Field
     {
         $button = $this->getLayout()->createBlock('adminhtml/widget_button')
             ->setData(array(
-                           'id'        => 'notification_button',
-                           'label'     => $this->helper('yapital/data')->__('Register live notification'),
-                           'onclick'   => 'javascript:yapitalNotificationRegister(); return false;'
+                           'id'        => $this->getConfigPath(). '_notification_button',
+                           'label'     => $this->getButtonLabel(),
+                           'onclick'   => $this->getConfigPath().'_yapitalConfig.register(\''.$this->getAjaxRegisterUrl().'\'); return false;'
                       ));
         return $button->toHtml();
     }
+
+    public function getButtonLabel()
+    {
+        return $this->helper('yapital/data')->__('Register live notification');
+    }
+
+    public function getButtonUnregisterLabel()
+    {
+        return $this->helper('yapital/data')->__('Unregister all live notifications');
+    }
+
+    public function getButtonUnregisterHtml()
+    {
+        $button = $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setData(array(
+                'id'        => $this->getConfigPath(). '_notification_unregister_button',
+                'label'     => $this->getButtonUnregisterLabel(),
+                'onclick'   => $this->getConfigPath().'_yapitalConfig.unregister(\''.$this->getAjaxUnregisterUrl().'\'); return false;'
+            ));
+        return $button->toHtml();
+    }
+
 }

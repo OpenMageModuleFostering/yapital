@@ -24,11 +24,21 @@ class Codex_Yapital_Adminhtml_Yapital_NotificationController extends Mage_Adminh
         );
     }
 
+    public function preDispatch()
+    {
+        if( $this->getRequest()->getParam('sandbox', false) )
+        {
+            /** @var $config Codex_Yapital_Model_Config */
+            $config = Mage::getSingleton('yapital/config');
+            $config->setSandbox( true );
+        }
+        parent::preDispatch();
+    }
+
     public function registerAction ()
     {
         session_write_close();
 
-        $dataHelper = Mage::helper('yapital/data');
         $result     = $this->_getStandardResult();
 
         if ( isset( $_REQUEST['notification_secret'] ) )
@@ -49,8 +59,6 @@ class Codex_Yapital_Adminhtml_Yapital_NotificationController extends Mage_Adminh
             }
             catch ( Codex_Yapital_ErrorException $e )
             {
-                $config = Mage::getModel('yapital/config');
-
                 if ( $e->getMessage() == "Rest-Request failed: Duplicate entry found." )
                 {
                     $result["has_errors"] = false;
@@ -93,6 +101,67 @@ class Codex_Yapital_Adminhtml_Yapital_NotificationController extends Mage_Adminh
             {
                 $result["message"] = $dataHelper->__('Valid.');
             }
+        }
+
+        $result = Mage::helper('core')->jsonEncode($result);
+        Mage::app()->getResponse()->setBody($result);
+    }
+
+    public function unregisterAction()
+    {
+        session_write_close();
+
+        $result     = $this->_getStandardResult();
+
+        /** @var $notification Codex_Yapital_Model_Notification */
+        $notification = Mage::getModel('yapital/notification');
+
+        $api = Mage::getModel("yapital/api_notification");
+        /* @var $api Codex_Yapital_Model_Api_Notification */
+
+        $error_cnt = 0;
+        $delete_cnt = 0;
+
+        foreach( $notification->getRegistered() AS $_notification )
+        {
+            try {
+                $api->delete( $_notification->getNotificationId() );
+                $delete_cnt++;
+            } catch( Exception $e )
+            {
+                $error_cnt++;
+            }
+        }
+
+        if( $error_cnt )
+        {
+            $result['has_errors'] = true;
+            $result['message'] =
+                $this->__('Sorry, but your notifications could not be deleted. Please try again later or <a onclick="window.open(this.href); return false;" href="https://www.yapital.com/consumer/index.html#customersupport">contact Yapital.</a>');
+        } else {
+            $result['has_errors'] = false;
+            $result['message'] = $this->__('%s notification(s) have been deleted.', $delete_cnt );
+        }
+
+        $result = Mage::helper('core')->jsonEncode($result);
+        Mage::app()->getResponse()->setBody($result);
+    }
+
+    public function showAction()
+    {
+        session_write_close();
+
+        $result     = array();
+
+        /** @var $notification Codex_Yapital_Model_Notification */
+        $notification = Mage::getModel('yapital/notification');
+
+        $api = Mage::getModel("yapital/api_notification");
+        /* @var $api Codex_Yapital_Model_Api_Notification */
+
+        foreach( $notification->getRegistered() AS $_notification )
+        {
+            $result[] = $_notification->getData();
         }
 
         $result = Mage::helper('core')->jsonEncode($result);

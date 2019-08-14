@@ -1,15 +1,17 @@
 <?php
 
-class Codex_Yapital_Block_System_Config_Storage_Credentials_Live_Secret
-extends Mage_Adminhtml_Block_System_Config_Form_Field
+class Codex_Yapital_Block_System_Config_Storage_Credentials_Secret
+extends Codex_Yapital_Block_System_Config_Storage_Credentials_Abstract
 {
+
+
     /*
      * Set template
      */
     protected function _construct()
     {
         parent::_construct();
-        $this->setTemplate('yapital/system/config/storage/credentials/live/secret.phtml');
+        $this->setTemplate('yapital/config/credentials/secret.phtml');
     }
 
     /**
@@ -44,10 +46,16 @@ extends Mage_Adminhtml_Block_System_Config_Form_Field
     {
         $button = $this->getLayout()->createBlock('adminhtml/widget_button')
             ->setData(array(
-                           'id'        => 'notification_generate_secret_button',
-                           'label'     => $this->helper('yapital/data')->__('Generate a new notification secret'),
-                           'onclick'   => 'javascript:yapitalLiveGenerateNotificationSecret(); return false;'
+                           'id'        => $this->getConfigPath().'_notification_generate_secret_button',
+                           'label'     => $this->getButtonLabel(),
+                           'onclick'   => $this->getConfigPath().'_yapitalConfig.generateNotificationSecret(); return false;'
                       ));
         return $button->toHtml();
     }
+
+    public function getButtonLabel()
+    {
+        return $this->helper('yapital/data')->__('Generate a new notification secret');
+    }
+
 }

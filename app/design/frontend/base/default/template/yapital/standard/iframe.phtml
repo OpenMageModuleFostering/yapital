@@ -1,10 +1,55 @@
 <?php /* @var $this Codex_Yapital_Block_Standard_Iframe */ ?>
 <div id="yapital-widget-container-id"></div>
+<p id="yapital-error-notice" style="display: none; font-weight: bold;">
+    <?php echo $this->__('Problems connecting with Yapital'); ?>
+    <br />
+    <?php echo $this->__('Please contact us at <a href="mailto:%s?subject=%s">%s</a>',
+        Mage::getStoreConfig('trans_email/ident_support/email'),
+        htmlentities($this->__('Yapital Payment Failed: %s', $this->getOrderTransaction()->getOrder()->getIncrementId())),
+        Mage::getStoreConfig('trans_email/ident_support/email')
+    ); ?>
+</p>
+
 <script src="<?php echo $this->getApiIFrameScript(); ?>"></script>
-<script>
+<script type="text/javascript">
     (function (window) {
         var transactionId = "<?php echo $this->getTransactionId(); ?>";
-        window.__yapital_init_widget(transactionId, "<?php echo $this->getApiIFrameScript(); ?>",
+        window.__yapital_init_widget(transactionId, "<?php echo $this->getApiUrl(); ?>/web-ui/",
                                      "yapital-widget-container-id");
+    })(window);
+
+    (function (window) {
+
+        function showFailed(errors)
+        {
+            if (errors == 3) {
+                $('yapital-error-notice').show();
+            }
+        }
+
+        setTimeout(function() {
+            var iframeSource = $$('#yapital-widget-container-id iframe').first().src;
+
+            if (iframeSource) {
+
+                var failedRequests = 0;
+
+                for(var i = 1; i <= 3; i++) {
+                    new Ajax.Request(iframeSource, {
+                        method: 'head',
+                        onSuccess: function(response) {
+                            if (response.readyState < 3) {
+                                showFailed(++failedRequests);
+                            }
+                        },
+                        onFailure: function() {
+                            showFailed(++failedRequests);
+                        }
+                    });
+                }
+
+            }
+
+        }, 5000);
     })(window);
 </script>

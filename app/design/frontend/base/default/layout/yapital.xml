@@ -29,6 +29,12 @@
         </reference>
     </yapital_standard_error>
 
+    <yapital_standard_documentation>
+        <reference name="content">
+            <block type="yapital/base" template="yapital/standard/documentation.phtml" name="yapital.standard.error" />
+        </reference>
+    </yapital_standard_documentation>
+
     <yapital_standard_accessdenied>
         <reference name="root">
             <action method="setTemplate"><template>page/3columns.phtml</template></action>

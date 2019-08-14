@@ -1,6 +1,6 @@
 <?php
 
-class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
+class Codex_Yapital_Model_Api_Connection extends Zend_Service_Abstract
 {
 
     /**
@@ -25,10 +25,45 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
 
         $adapter->setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
         $adapter->setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
+        $adapter->setCurlOption(CURLOPT_SSLVERSION, 3);
 
         self::getHttpClient()->setAdapter($adapter);
 
     }
+
+    protected function _getQuery($data = array())
+    {
+        /** @var $tokenModel Codex_Yapital_Model_Api_Token */
+        $tokenModel = Mage::getModel("yapital/api_token");
+
+        $config = Mage::getSingleton('yapital/config');
+        $token = $tokenModel->getTokenByCredentials(
+            $config->getApiClientId(),
+            $config->getApiSecret()
+        );
+
+        $data['access_token'] = $token->getAccessToken();
+
+        return $data;
+    }
+
+    public function getToken()
+    {
+
+        if (null == $this->_token)
+        {
+            /* @var Codex_Yapital_Model_Api_Token $tokenModel */
+            $tokenApi = Mage::getModel('yapital/api_token');
+
+            /** @var Codex_Yapital_Model_Datatype_Token $tokenModel */
+            $tokenModel = $tokenApi->getTokenByStoreConfig();
+
+            $this->_token = $tokenModel->getAccessToken();
+        }
+
+        return $this->_token;
+    }
+
 
 
     /**
@@ -49,29 +84,7 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
 
         self::getHttpClient()->setEncType(false);
 
-        \Codex_Yapital_Model_Log::verbose(
-            sprintf('Send post to %s', $path)
-        );
-
-        $response = $client->request('POST');
-
-        $this->_logResponse($response);
-
-        return $response;
-    }
-
-    /**
-     * @param Zend_Http_Response $response
-     */
-    protected function _logResponse($response)
-    {
-        \Codex_Yapital_Model_Log::verbose(
-            sprintf('Status %d: %d B body received', $response->getStatus(), strlen($response->getBody()))
-        );
-
-        \Codex_Yapital_Model_Log::debug(
-            sprintf("<<<BODYBEGIN\n\n%s\n\nBODYEND;", $response->getBody())
-        );
+        return $client->request('POST');
     }
 
     public function restDeleteQuery($path, $query)
@@ -163,14 +176,10 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
      */
     public function restGet($path, array $query = null)
     {
-        $this->_prepareRest($path);
         $client = self::getHttpClient();
-        $client->setParameterGet($query);
-        $response = $client->request('GET');
-
-        $this->_logResponse($response);
-
-        return $response;
+        $client->setParameterGet($this->_getQuery($query));
+        $this->_prepareRest($path);
+        return $client->request('GET');
     }
 
     /**
@@ -199,9 +208,6 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
         if (substr($status, 0, 1) != 2) {
             Codex_Yapital_Model_Log::error("Unable to communicate with api. " . $_performPost->getMessage());
         }
-
-        $this->_logResponse($_performPost);
-
         return $_performPost;
     }
 

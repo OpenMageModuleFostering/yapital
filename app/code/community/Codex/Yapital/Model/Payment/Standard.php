@@ -29,6 +29,8 @@ class Codex_Yapital_Model_Payment_Standard extends Mage_Payment_Model_Method_Abs
 
     public function initialize($paymentAction, $stateObject)
     {
+        Codex_Yapital_Model_Log::debug('Payment_Standard::initialize()');
+
         $state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
         $stateObject->setState($state);
         $stateObject->setStatus('pending_payment');
@@ -56,6 +58,14 @@ class Codex_Yapital_Model_Payment_Standard extends Mage_Payment_Model_Method_Abs
 
         $amountModel->setCurrency(Codex_Yapital_Model_Datatype_Currency::EUR);
         $amountModel->setValue($amount);
+
+        Codex_Yapital_Model_Log::verbose(
+            sprintf(
+                'Refunding cash (%d %s)',
+                $amountModel->getValue(),
+                $amountModel->getCurrency()
+            )
+        );
 
         $basket->setAmountToCredit($amountModel);
 

@@ -4,13 +4,13 @@ class Codex_Yapital_Model_Config
 {
 
     protected $_storeId = null;
-    protected $_force_sandbox = false;
+    protected $_force_sandbox = null;
 
     /**
      * Helps forcing Sandbox Settings
      * @param $bool
      */
-    public function setSandbox( $bool )
+    public function setSandbox($bool)
     {
         $this->_force_sandbox = $bool;
     }
@@ -25,8 +25,7 @@ class Codex_Yapital_Model_Config
      */
     public function getApiIFrameScript()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        {
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX) {
             // sandbox
             return Mage::getConfig()->getNode('default/yapital_sandbox/url/iframe_script');
         } else {
@@ -43,9 +42,12 @@ class Codex_Yapital_Model_Config
      */
     public function getApiUrl()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        {
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX) {
             // sandbox
+            if ($sandboxUri = Mage::getStoreConfig('payment/yapital_standard/sandbox_apiuri', $this->getStoreId())) {
+                return $sandboxUri;
+            }
+
             return Mage::getConfig()->getNode('default/yapital_sandbox/url/base');
         } else {
             // live
@@ -56,12 +58,10 @@ class Codex_Yapital_Model_Config
 
     public function getApiClientId()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        { // sandbox is selected: return sandbox setting
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX
+        ) { // sandbox is selected: return sandbox setting
             $clientId = Mage::getStoreConfig('payment/yapital_standard/sandbox_client_id', $this->getStoreId());
-        }
-        else
-        { // default: live
+        } else { // default: live
             $clientId = Mage::getStoreConfig('payment/yapital_standard/client_id', $this->getStoreId());
         }
 
@@ -71,12 +71,10 @@ class Codex_Yapital_Model_Config
 
     public function getApiSecret()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        { // sandbox is selected: return sandbox setting
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX
+        ) { // sandbox is selected: return sandbox setting
             $apiSecret = Mage::getStoreConfig('payment/yapital_standard/sandbox_secret_key', $this->getStoreId());
-        }
-        else
-        { // default: live
+        } else { // default: live
             $apiSecret = Mage::getStoreConfig('payment/yapital_standard/secret_key', $this->getStoreId());
         }
 
@@ -91,9 +89,12 @@ class Codex_Yapital_Model_Config
      */
     public function getApiUrlPath()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        {
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX) {
             // sandbox
+            if ($sandboxUri = Mage::getStoreConfig('payment/yapital_standard/sandbox_apipath', $this->getStoreId())) {
+                return $sandboxUri;
+            }
+
             return Mage::getConfig()->getNode('default/yapital_sandbox/url/api');
         } else {
             // live
@@ -104,25 +105,27 @@ class Codex_Yapital_Model_Config
 
     public function getCredentialsSwitch()
     {
-        if( $this->_force_sandbox )
-        {
-            return Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX;
+        if (!is_null($this->_force_sandbox)) {
+            if ($this->_force_sandbox) {
+                return Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX;
+            } else {
+                return Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::LIVE;
+            }
         }
+
         return Mage::getStoreConfig('payment/yapital_standard/credentials_switch', $this->getStoreId());
     }
 
 
     public function getNotificationSecret()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        { // sandbox is selected: return sandbox setting
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX
+        ) { // sandbox is selected: return sandbox setting
             $notificationSecret = Mage::getStoreConfig(
                 'payment/yapital_standard/sandbox_notification_secret',
                 $this->getStoreId()
             );
-        }
-        else
-        {
+        } else {
             $notificationSecret = Mage::getStoreConfig(
                 'payment/yapital_standard/notification_secret',
                 $this->getStoreId()
@@ -141,8 +144,7 @@ class Codex_Yapital_Model_Config
 
     public function getStoreId()
     {
-        if (null === $this->_storeId)
-        {
+        if (null === $this->_storeId) {
             $this->_storeId = Mage::app()->getStore()->getStoreId();
         }
 
@@ -152,12 +154,10 @@ class Codex_Yapital_Model_Config
 
     public function getYapitalShopId()
     {
-        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX)
-        { // sandbox is selected: use sandbox setting
+        if ($this->getCredentialsSwitch() == Codex_Yapital_Model_System_Config_Payment_Credentials_Switch::SANDBOX
+        ) { // sandbox is selected: use sandbox setting
             $shopId = Mage::getStoreConfig('payment/yapital_standard/sandbox_shop_id', $this->getStoreId());
-        }
-        else
-        { // default: live
+        } else { // default: live
             $shopId = Mage::getStoreConfig('payment/yapital_standard/shop_id', $this->getStoreId());
         }
 

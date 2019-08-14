@@ -323,6 +323,7 @@ class Codex_Yapital_Model_Datatype_Transaction extends Codex_Yapital_Model_Datat
 
     function getData ()
     {
+
         return array(
             // "transaction_id"     => $this->getTransactionId(),
             "qr_code_url"        => $this->getQrCodeUrl(),

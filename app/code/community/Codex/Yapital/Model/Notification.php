@@ -53,6 +53,14 @@ class Codex_Yapital_Model_Notification extends Mage_Core_Model_Abstract
         $this->setData('event_id',          $data['event_id']);
         $this->setData('event_timestamp',   $data['event_timestamp']);
 
+        Codex_Yapital_Model_Log::log(
+            sprintf("Processing Notification-Id #%s, Transaction-Id #%s, Magento-Order-Id %s",
+                $this->getData('notification_id'),
+                $this->getData('transaction_id'),
+                $this->getTransaction()->getOrder()->getIncrementId()
+            )
+        );
+
         return $this;
     }
 
@@ -93,6 +101,22 @@ class Codex_Yapital_Model_Notification extends Mage_Core_Model_Abstract
         $result = $api->register($notification);
 
         return $this;
+    }
+
+    /**
+     * This method serves to get all notifications to which the shop is subscribed.
+     *
+     * @return Codex_Yapital_Model_Datatype_Notification[]
+     */
+    public function getRegistered()
+    {
+        /* @var $notification Codex_Yapital_Model_Datatype_Notification */
+        $notification = Mage::getModel("yapital/datatype_notification");
+
+        $api = Mage::getModel("yapital/api_notification");
+        /* @var $api Codex_Yapital_Model_Api_Notification */
+
+        return $api->getAll();
     }
 
     public function getCallbackUrl() {

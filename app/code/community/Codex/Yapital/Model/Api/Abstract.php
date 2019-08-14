@@ -47,6 +47,8 @@ class Codex_Yapital_Model_Api_Abstract
 
     protected function _getQuery($data = array())
     {
+        Codex_Yapital_Model_Log::debug("Adding token to query");
+
         /** @var $tokenModel Codex_Yapital_Model_Api_Token */
         $tokenModel = Mage::getModel("yapital/api_token");
 
@@ -55,7 +57,11 @@ class Codex_Yapital_Model_Api_Abstract
             $this->_getConfig()->getApiSecret()
         );
 
-        $data['access_token'] = $token->getAccessToken();
+        if ($token)
+        { // token received: add the query
+            $data['access_token'] = $token->getAccessToken();
+        }
+
 
         return $data;
     }
@@ -83,6 +89,8 @@ class Codex_Yapital_Model_Api_Abstract
      */
     protected function _send($path, $data)
     {
+        Codex_Yapital_Model_Log::debug("Prepare sending data to API...");
+
         $querydata = $this->_getQuery();
 
         $path = $this->_getConfig()->getApiUrlPath() . $path;
@@ -94,4 +102,6 @@ class Codex_Yapital_Model_Api_Abstract
 
         return $response;
     }
+
+
 }

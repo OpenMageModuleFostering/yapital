@@ -1,6 +1,6 @@
 <?php
 
-class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
+class Codex_Yapital_Model_Api_Client extends Zend_Service_Abstract
 {
 
     /**
@@ -9,25 +9,46 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
      */
     protected $_data = array();
 
+    protected $_token;
+
     /**
      * Zend_Uri of this web service
      * @var Zend_Uri_Http
      */
     protected $_uri = null;
 
-    public function __construct ( $uri = null )
+    public function __construct()
     {
-        if (!empty($uri)) {
-            $this->setUri($uri);
-        }
-
         $adapter = new Zend_Http_Client_Adapter_Curl();
 
         $adapter->setCurlOption(CURLOPT_SSL_VERIFYPEER, 0);
         $adapter->setCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
 
+        $configModel = Mage::getSingleton('yapital/config');
+
+
+        $uri = $configModel->getApiUrl() . $configModel->getApiUrlPath();
+        $this->_uri = Zend_Uri::factory($uri);
+
         self::getHttpClient()->setAdapter($adapter);
 
+    }
+
+    public function getToken()
+    {
+
+        if (null == $this->_token)
+        {
+            /* @var Codex_Yapital_Model_Api_Token $tokenModel */
+            $tokenApi = Mage::getModel('yapital/api_token');
+
+            /** @var Codex_Yapital_Model_Datatype_Token $tokenModel */
+            $tokenModel = $tokenApi->getTokenByStoreConfig();
+
+            $this->_token = $tokenModel->getAccessToken();
+        }
+
+        return $this->_token;
     }
 
 
@@ -35,12 +56,12 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
      * Send a REST POST Query.
      *
      * @param        $path
-     * @param array  $query
+     * @param array $query
      * @param string $data
      *
      * @return Zend_Http_Response
      */
-    public function restPostQuery( $path, $query = array(), $data = '' )
+    public function restPostQuery($path, $query = array(), $data = '')
     {
         $this->_prepareRest($path);
         $client = self::getHttpClient();
@@ -49,29 +70,33 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
 
         self::getHttpClient()->setEncType(false);
 
-        \Codex_Yapital_Model_Log::verbose(
-            sprintf('Send post to %s', $path)
-        );
-
-        $response = $client->request('POST');
-
-        $this->_logResponse($response);
-
-        return $response;
+        return $client->request('POST');
     }
 
     /**
-     * @param Zend_Http_Response $response
+     * Call a remote REST web service URI and return the Zend_Http_Response object
+     *
+     * @param  string $path The path to append to the URI
+     * @throws Zend_Rest_Client_Exception
+     * @return void
      */
-    protected function _logResponse($response)
+    private function _prepareRest($path)
     {
-        \Codex_Yapital_Model_Log::verbose(
-            sprintf('Status %d: %d B body received', $response->getStatus(), strlen($response->getBody()))
-        );
+        // Get the URI object and configure it
+        if (!$this->_uri instanceof Zend_Uri_Http) {
+            #require_once 'Zend/Rest/Client/Exception.php';
+            throw new Zend_Rest_Client_Exception('URI object must be set before performing call');
+        }
 
-        \Codex_Yapital_Model_Log::debug(
-            sprintf("<<<BODYBEGIN\n\n%s\n\nBODYEND;", $response->getBody())
-        );
+        $uri = $this->_uri->getUri();
+
+        if ($path[0] != '/' && $uri[strlen($uri) - 1] != '/') {
+            $path = '/' . $path;
+        }
+
+        $this->_uri->setPath($path);
+
+        $this->getHttpClient()->setUri($this->_uri);
     }
 
     public function restDeleteQuery($path, $query)
@@ -92,72 +117,19 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
 
         //
         // Only Accept JSON
-        self::getHttpClient()->setHeaders('Accept','application/json');
+        self::getHttpClient()->setHeaders('Accept', 'application/json');
 
         //
         // Only send json
-        self::getHttpClient()->setHeaders('Content-Type','application/json');
+        self::getHttpClient()->setHeaders('Content-Type', 'application/json');
 
-    }
-
-    /**
-     * Set the URI to use in the request
-     *
-     * @param string|Zend_Uri_Http $uri URI for the web service
-     * @return Zend_Rest_Client
-     */
-    public function setUri($uri)
-    {
-        if ($uri instanceof Zend_Uri_Http) {
-            $this->_uri = $uri;
-        } else {
-            $this->_uri = Zend_Uri::factory($uri);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Retrieve the current request URI object
-     *
-     * @return Zend_Uri_Http
-     */
-    public function getUri()
-    {
-        return $this->_uri;
-    }
-
-    /**
-     * Call a remote REST web service URI and return the Zend_Http_Response object
-     *
-     * @param  string $path            The path to append to the URI
-     * @throws Zend_Rest_Client_Exception
-     * @return void
-     */
-    private function _prepareRest($path)
-    {
-        // Get the URI object and configure it
-        if (!$this->_uri instanceof Zend_Uri_Http) {
-            #require_once 'Zend/Rest/Client/Exception.php';
-            throw new Zend_Rest_Client_Exception('URI object must be set before performing call');
-        }
-
-        $uri = $this->_uri->getUri();
-
-        if ($path[0] != '/' && $uri[strlen($uri)-1] != '/') {
-            $path = '/' . $path;
-        }
-
-        $this->_uri->setPath($path);
-
-        $this->getHttpClient()->setUri($this->_uri);
     }
 
     /**
      * Performs an HTTP GET request to the $path.
      *
      * @param string $path
-     * @param array  $query Array of GET parameters
+     * @param array $query Array of GET parameters
      * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
@@ -166,11 +138,29 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
         $this->_prepareRest($path);
         $client = self::getHttpClient();
         $client->setParameterGet($query);
-        $response = $client->request('GET');
+        return $client->request('GET');
+    }
 
-        $this->_logResponse($response);
+    public function request($type = 'GET', $path = null, $query = null)
+    {
+        $this->_prepareRest($path);
+        $client = self::getHttpClient();
+        $client->setParameterGet($query);
+        return $client->request($type);
+    }
 
-        return $response;
+    /**
+     * Performs an HTTP POST request to $path.
+     *
+     * @param string $path
+     * @param mixed $data Raw data to send
+     * @throws Zend_Http_Client_Exception
+     * @return Zend_Http_Response
+     */
+    final public function restPost($path, $data = null)
+    {
+        $this->_prepareRest($path);
+        return $this->_performPost('POST', $data);
     }
 
     /**
@@ -190,7 +180,7 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
         if (is_string($data)) {
             $client->setRawData($data);
         } elseif (is_array($data) || is_object($data)) {
-            $client->setParameterPost((array) $data);
+            $client->setParameterPost((array)$data);
         }
 
         $_performPost = $client->request($method);
@@ -199,24 +189,7 @@ class Codex_Yapital_Model_Api_Restclient extends Zend_Service_Abstract
         if (substr($status, 0, 1) != 2) {
             Codex_Yapital_Model_Log::error("Unable to communicate with api. " . $_performPost->getMessage());
         }
-
-        $this->_logResponse($_performPost);
-
         return $_performPost;
-    }
-
-    /**
-     * Performs an HTTP POST request to $path.
-     *
-     * @param string $path
-     * @param mixed $data Raw data to send
-     * @throws Zend_Http_Client_Exception
-     * @return Zend_Http_Response
-     */
-    final public function restPost($path, $data = null)
-    {
-        $this->_prepareRest($path);
-        return $this->_performPost('POST', $data);
     }
 
     /**

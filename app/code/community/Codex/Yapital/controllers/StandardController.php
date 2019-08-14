@@ -79,13 +79,15 @@ class Codex_Yapital_StandardController extends Mage_Core_Controller_Front_Action
      */
     public function errorAction ()
     {
-        if ( $order = $this->_getOrder() ) {
-            if ($order->getId()) {
-                $order->addStatusHistoryComment('Error during checkout with yapital');
-                $order->cancel()->save();
-            }
-        }
+        $this->loadLayout();
+        $this->renderLayout();
+    }
 
+    /**
+     * wenn yapital-customer got an error
+     */
+    public function documentationAction ()
+    {
         $this->loadLayout();
         $this->renderLayout();
     }

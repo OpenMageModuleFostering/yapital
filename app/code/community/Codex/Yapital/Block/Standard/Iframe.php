@@ -19,7 +19,7 @@ class Codex_Yapital_Block_Standard_Iframe extends Codex_Yapital_Block_AbstractBl
     }
 
     public function getApiUrl() {
-        return $this->_getConfig()->getApiUrl();
+        return rtrim( $this->_getConfig()->getApiUrl() , '/') .'/';
     }
 
     public function getApiIFrameScript()
