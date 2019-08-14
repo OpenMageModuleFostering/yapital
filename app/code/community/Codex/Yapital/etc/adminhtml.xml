@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<config>
+    <menu>
+        <report>
+            <children>
+                <yapital translate="title" module="yapital">
+                    <title>Yapital</title>
+                    <sort_order>10</sort_order>
+                    <children>
+                        <payment translate="title" module="yapital">
+                            <title>Payment</title>
+                            <action>adminhtml/report_yapital/payment</action>
+                        </payment>
+                    </children>
+                </yapital>
+            </children>
+        </report>
+    </menu>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <report>
+                        <children>
+                            <yapital>
+                                <children>
+                                    <payment translate="title" module="yapital">
+                                        <title>Payment</title>
+                                    </payment>
+                                </children>
+                            </yapital>
+                        </children>
+                    </report>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

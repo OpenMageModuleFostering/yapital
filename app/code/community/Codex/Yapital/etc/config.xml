@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Codex_Yapital>
+            <version>1.0.0.0</version>
+        </Codex_Yapital>
+    </modules>
+
+    <global>
+        <blocks>
+            <yapital>
+                <class>Codex_Yapital_Block</class>
+            </yapital>
+        </blocks>
+
+        <helpers>
+            <yapital>
+                <class>Codex_Yapital_Helper</class>
+            </yapital>
+        </helpers>
+
+        <models>
+            <yapital>
+                <class>Codex_Yapital_Model</class>
+                <resourceModel>yapital_resource</resourceModel>
+            </yapital>
+
+            <yapital_resource>
+                <class>Codex_Yapital_Model_Resource</class>
+                <entities>
+                    <order_transaction>
+                        <table>yapital_order_transaction</table>
+                    </order_transaction>
+                    <notification>
+                        <table>yapital_notification</table>
+                    </notification>
+                </entities>
+            </yapital_resource>
+
+            <sales_resource>
+                <entities>
+                    <order_aggregated_payment>
+                        <table>sales_order_aggregated_payment</table>
+                    </order_aggregated_payment>
+                </entities>
+            </sales_resource>
+        </models>
+
+        <resources>
+            <yapital_setup>
+                <setup>
+                    <module>Codex_Yapital</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </yapital_setup>
+        </resources>
+
+    </global>
+
+    <phpunit>
+        <suite>
+            <modules>
+                <Codex_Yapital/>
+            </modules>
+        </suite>
+    </phpunit>
+
+    <frontend>
+        <routers>
+            <yapital>
+                <use>standard</use>
+                <args>
+                    <module>Codex_Yapital</module>
+                    <frontName>yapital</frontName>
+                </args>
+            </yapital>
+        </routers>
+        <layout>
+            <updates>
+                <yapital>
+                    <file>yapital.xml</file>
+                </yapital>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Codex_Yapital>
+                    <files>
+                        <default>Codex_Yapital.csv</default>
+                    </files>
+                </Codex_Yapital>
+            </modules>
+        </translate>
+    </frontend>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <yapital>
+                    <file>yapital.xml</file>
+                </yapital>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <config before="Mage_Adminhtml">Codex_Yapital_Adminhtml</config>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <crontab>
+        <jobs>
+            <aggregate_yapital_report_order_payment_data>
+                <schedule>
+                    <cron_expr>0 0 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>yapital/observer::aggregateYapitalReportOrderPaymentData</model>
+                </run>
+            </aggregate_yapital_report_order_payment_data>
+        </jobs>
+    </crontab>
+
+    <default>
+        <yapital>
+            <url>
+                <base>https://secure.yapital.com</base>
+                <api>api/v0.1</api>
+                <iframe_script>/beta/js/widget/script.js</iframe_script>
+            </url>
+        </yapital>
+
+        <yapital_sandbox>
+            <url>
+                <base>https://demo.dev.yapital.com</base>
+                <api>/3pnext/api/v0.1</api>
+                <iframe_script>/3pnext/web-ui/js/widget/script.js</iframe_script>
+            </url>
+        </yapital_sandbox>
+
+        <payment>
+            <yapital_standard>
+                <active>0</active>
+                <model>yapital/payment_standard</model>
+                <order_status>pending</order_status>
+                <title>Yapital Standard Payment</title>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+            </yapital_standard>
+        </payment>
+    </default>
+</config>

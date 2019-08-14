@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <report_yapital>
+        <reference name="messages">
+            <action method="addNotice" translate="message">
+                <message>This report depends on timezone configuration. Once timezone is changed, the lifetime statistics need to be refreshed.</message>
+            </action>
+        </reference>
+    </report_yapital>
+
+    <adminhtml_report_yapital_payment>
+        <update handle="report_yapital"/>
+        <reference name="content">
+            <block type="yapital/adminhtml_report_yapital_payment" template="report/grid/container.phtml" name="yapital.report.grid.container">
+                <block type="adminhtml/store_switcher" template="report/store/switcher/enhanced.phtml" name="store.switcher">
+                    <action method="setStoreVarName"><var_name>store_ids</var_name></action>
+                </block>
+                <block type="sales/adminhtml_report_filter_form_order" name="grid.filter.form">
+                    <action method="addReportTypeOption" translate="value">
+                        <key>created_at_order</key>
+                        <value>Order Created Date</value>
+                    </action>
+                    <action method="addReportTypeOption" translate="value">
+                        <key>updated_at_order</key>
+                        <value>Order Updated Date</value>
+                    </action>
+                    <action method="setFieldOption" translate="value">
+                        <field>report_type</field>
+                        <option>note</option>
+                        <value>Order Updated Date report is real-time, does not need statistics refreshing.</value>
+                    </action>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_report_yapital_payment>
+</layout>

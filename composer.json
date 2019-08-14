@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/yapital",
+    "type": "magento-module",
+    "license": "APL",
+    "homepage": "",
+    "description": "Yapital, the first Pan-European, cross-channel payment solution, is the fast, easy and secure way for your customers to pay. All payments and transactions immediately show up in your Yapital business account and all payments are guaranteed.",
+    "authors": [
+    {
+        "name": "code-x GmbH",
+        "email": "yapital@code-x.de"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

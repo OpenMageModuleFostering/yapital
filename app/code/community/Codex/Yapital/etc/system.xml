@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <payment>
+            <groups>
+                <yapital_standard translate="label" module="yapital">
+                    <label>Yapital</label>
+                    <sort_order>670</sort_order>
+                    <!-- do not show this configuration options in store scope -->
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <comment><![CDATA[
+                        Please fill out the information below. Read this documentation of
+                        tests you need to run before going online: <a href="http://code-x.de">Documentation</a>
+                    ]]></comment>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active>
+
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </title>
+
+                        <order_status translate="label">
+                            <label>Paid order status</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <sort_order>400</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_status>
+
+                        <credentials_switch translate="label">
+                            <label>Use this credentials:</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>yapital/system_config_payment_credentials_switch</source_model>
+                            <sort_order>500</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </credentials_switch>
+
+                        <!-- LIVE -->
+
+                        <heading_credentials translate="label">
+                            <label>Live-System</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>600</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </heading_credentials>
+
+                        <shop_id translate="label">
+                            <label>Shop-Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>610</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </shop_id>
+
+                        <client_id translate="label">
+                            <label>Client-Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>630</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </client_id>
+
+                        <secret_key translate="label">
+                            <label>Secret key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>660</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </secret_key>
+
+                        <check_credentials translate="comment">
+                            <label>Test credentials</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>yapital/system_config_storage_credentials_validate</frontend_model>
+                            <sort_order>690</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <comment><![CDATA[
+                                Please fill out your credentials given by
+                                <a href="http://www.yapital.com" target="_new">Yapital</a>
+                                and test them here.
+                            ]]></comment>
+                        </check_credentials>
+
+                        <notification_secret translate="label">
+                            <label>Secret</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>692</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <comment>Secret that Yapital will use.</comment>
+                        </notification_secret>
+
+                        <notifcation_secret_button>
+                            <!-- "Generate a new secret"-Button -->
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>yapital/system_config_storage_credentials_live_secret</frontend_model>
+                            <sort_order>694</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </notifcation_secret_button>
+
+                        <notification_id translate="label">
+                            <label>Yapital Notification Id</label>
+                            <!-- TDOO readonly -->
+                            <frontend_type>text</frontend_type>
+                            <sort_order>696</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </notification_id>
+
+                        <notifcation_button>
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>yapital/system_config_storage_credentials_notification</frontend_model>
+                            <sort_order>698</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </notifcation_button>
+
+                        <!-- SANDBOX -->
+
+                        <heading_sandbox translate="label">
+                            <label>Sandbox (test environment)</label>
+                            <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                            <sort_order>800</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </heading_sandbox>
+
+                        <sandbox_shop_id translate="label">
+                            <label>Shop-Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>810</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </sandbox_shop_id>
+
+                        <sandbox_client_id translate="label">
+                            <label>Client-Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>830</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </sandbox_client_id>
+
+                        <sandbox_secret_key translate="label">
+                            <label>Secret key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>860</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </sandbox_secret_key>
+
+                        <sandbox_check_credentials translate="comment">
+                            <!--"validate sandbox"-button-->
+                            <label>Test credentials</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>yapital/config_credentials_sandbox</frontend_model>
+                            <sort_order>865</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <comment><![CDATA[
+                                Please fill out your credentials given by
+                                <a href="http://www.yapital.com" target="_new">Yapital</a>
+                                and test them here.
+                             ]]></comment>
+                        </sandbox_check_credentials>
+
+                        <sandbox_notification_secret translate="label">
+                            <label>Notification Secret</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>870</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <comment>Secret that Yapital will use in your sandbox.</comment>
+                        </sandbox_notification_secret>
+
+                        <sandbox_notifcation_secret_button>
+                            <!-- "Generate a new secret"-button -->
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>yapital/system_config_storage_credentials_sandbox_secret</frontend_model>
+                            <sort_order>875</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </sandbox_notifcation_secret_button>
+
+                        <sandbox_notification_id translate="label">
+                            <label>Yapital Sandbox-Notification Id</label>
+                            <!-- TODO readonly -->
+                            <frontend_type>text</frontend_type>
+                            <sort_order>880</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                        </sandbox_notification_id>
+
+                        <sandbox_button>
+                            <label></label>
+                            <frontend_type>button</frontend_type>
+                            <!-- "Register sandbox notification"-Button -->
+                            <frontend_model>yapital/config_notification_sandbox</frontend_model>
+                            <sort_order>890</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                        </sandbox_button>
+
+                    </fields>
+                </yapital_standard>
+            </groups>
+        </payment>
+    </sections>
+</config>
