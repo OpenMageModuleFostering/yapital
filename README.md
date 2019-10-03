@@ -1,3 +1,5 @@
+
+
 ## Original Package Description
 
 Yapital, the first Pan-European, cross-channel payment solution, is the fast, easy and secure way for your customers to pay. All payments and transactions immediately show up in your Yapital business account and all payments are guaranteed.
